@@ -266,11 +266,15 @@ EOT
         $input->setOption('structure', $structure);
 
         // summary
+        $services = '';
+        if ($servicesFormat != $format) {
+            $services = sprintf(" (\"<info>%s</info>\" format for the services)", $servicesFormat);
+        }
         $output->writeln(array(
             '',
             $this->getHelper('formatter')->formatBlock('Summary before generation', 'bg=blue;fg=white', true),
             '',
-            sprintf("You are going to generate a \"<info>%s\\%s</info>\" bundle\nin \"<info>%s</info>\" using the \"<info>%s</info>\" format.", $namespace, $bundle, $dir, $format),
+            sprintf("You are going to generate a \"<info>%s\\%s</info>\" bundle\nin \"<info>%s</info>\" using the \"<info>%s</info>\" format%s.", $namespace, $bundle, $dir, $format, $services),
             '',
         ));
     }
