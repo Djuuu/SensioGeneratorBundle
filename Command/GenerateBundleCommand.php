@@ -234,6 +234,23 @@ EOT
             $input->setOption('format', $format);
         }
 
+        $servicesFormat = null;
+        try {
+            $servicesFormat = $input->getOption('services-format') ? Validators::validateServicesFormat($input->getOption('services-format')) : $format;
+        } catch (\Exception $error) {
+            $output->writeln($dialog->getHelperSet()->get('formatter')->formatBlock($error->getMessage(), 'error'));
+        }
+
+        if (null === $servicesFormat || 'annotation' == $servicesFormat) {
+            $output->writeln(array(
+                '',
+                'Determine the format to use for the generated services configuration.',
+                '',
+            ));
+            $servicesFormat = $dialog->askAndValidate($output, $dialog->getQuestion('Services configuration format (yml, xml, or php)', $input->getOption('services-format')), array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateServicesFormat'), false, $input->getOption('services-format'));
+            $input->setOption('services-format', $servicesFormat);
+        }
+
         // optional files to generate
         $output->writeln(array(
             '',
