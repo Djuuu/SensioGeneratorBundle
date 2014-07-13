@@ -39,6 +39,7 @@ class GenerateBundleCommand extends GeneratorCommand
                 new InputOption('dir', '', InputOption::VALUE_REQUIRED, 'The directory where to create the bundle'),
                 new InputOption('bundle-name', '', InputOption::VALUE_REQUIRED, 'The optional bundle name'),
                 new InputOption('format', '', InputOption::VALUE_REQUIRED, 'Use the format for configuration files (php, xml, yml, or annotation)'),
+                new InputOption('services-format', '', InputOption::VALUE_REQUIRED, 'Use the format for services configuration file (php, xml, or yml)'),
                 new InputOption('structure', '', InputOption::VALUE_NONE, 'Whether to generate the whole directory structure'),
             ))
             ->setDescription('Generates a bundle')
@@ -100,6 +101,13 @@ EOT
             $input->setOption('format', 'annotation');
         }
         $format = Validators::validateFormat($input->getOption('format'));
+        if (null === $input->getOption('services-format')) {
+            $input->setOption('services-format', $input->getOption('format'));
+        }
+        if ('annotation' === $input->getOption('services-format')) {
+            $input->setOption('services-format', 'yml');
+        }
+        $servicesFormat = Validators::validateServicesFormat($input->getOption('services-format'));
         $structure = $input->getOption('structure');
 
         $dialog->writeSection($output, 'Bundle generation');
@@ -109,7 +117,7 @@ EOT
         }
 
         $generator = $this->getGenerator();
-        $generator->generate($namespace, $bundle, $dir, $format, $structure);
+        $generator->generate($namespace, $bundle, $dir, $format, $servicesFormat, $structure);
 
         $output->writeln('Generating the bundle code: <info>OK</info>');
 
